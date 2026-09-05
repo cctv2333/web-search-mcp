@@ -40,6 +40,20 @@ def _clean_text(raw: str | None, limit: int = 300) -> str:
     return t[:limit]
 
 
+def _clean_link(raw: str) -> str:
+    """净化 Bing RSS 给部分站点（实测知乎 zhuanlan.zhihu.com）link 追加的
+    '%20标题%20lang:zh' 尾巴（含字面空格变体）；只在其带 lang: 签名时截断，避免误伤合法 URL。"""
+    raw = (raw or "").strip()
+    m = re.search(r"%20\S*lang:[A-Za-z-]+$", raw, re.I)
+    if m:
+        raw = raw[: m.start()].strip()
+    else:
+        m2 = re.search(r"\s+(?:\S+\s+)*lang:[A-Za-z-]+\s*$", raw, re.I)
+        if m2:
+            raw = raw[: m2.start()].strip()
+    return raw.strip()
+
+
 def _parse_rss(xml_text: str) -> list[SearchResult]:
     try:
         root = ET.fromstring(xml_text)
@@ -52,7 +66,7 @@ def _parse_rss(xml_text: str) -> list[SearchResult]:
             el = it.find(tag)
             return (el.text or "").strip() if el is not None and el.text else ""
         title = _clean_text(_f("title"), 200)
-        link = decode_bing_redirect(_f("link"))
+        link = decode_bing_redirect(_clean_link(_f("link")))
         desc = _clean_text(_f("description"), 300)
         pub = ""
         raw_pub = _f("pubDate")
@@ -81,7 +95,7 @@ def _parse_html(html_text: str) -> list[SearchResult]:
             h2 = re.search(r"<a[^>]+href=\"([^\"]+)\"[^>]*>(.*?)</a>", block, re.S | re.I)
         if not h2:
             continue
-        url = decode_bing_redirect(_html.unescape(h2.group(1)))
+        url = decode_bing_redirect(_clean_link(_html.unescape(h2.group(1))))
         if not url.startswith(("http://", "https://")):
             continue
         title = _clean_text(h2.group(2), 200)

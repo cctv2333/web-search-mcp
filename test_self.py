@@ -59,6 +59,14 @@ def unit_checks() -> None:
     assert "正文描述一段文字" in rows[0].snippet
     PASS.append("单元检查（Bing RSS 解析 + 跳转解码 + 时间）")
 
+    # 外部审计复现：Bing RSS 给部分站(知乎)的 link 追加 "%20标题%20lang:zh" 尾巴 → _clean_link 净化
+    bad_zhihu = "https://zhuanlan.zhihu.com/p/2032778955112101171%20DeepSeek%20V4%20Flash%20Pro%20价格%20lang:zh"
+    assert providers._clean_link(bad_zhihu) == "https://zhuanlan.zhihu.com/p/2032778955112101171", providers._clean_link(bad_zhihu)
+    assert providers._clean_link("https://example.com/a%20b") == "https://example.com/a%20b"  # 无 lang 签名不误伤
+    assert providers._clean_link("https://a.com/") == "https://a.com/"
+    assert providers._clean_link("https://a.com/p 标题 lang:zh") == "https://a.com/p"  # 字面空格变体（自测发现并修复）
+    PASS.append("单元检查（Bing RSS 链接污染净化 _clean_link）")
+
     # S6: 数字页码 / rel=next 探测
     c1 = reader._numeric_next("https://news.example.com/story?page=3&x=1")
     assert c1 and "page=4" in c1, c1

@@ -18,10 +18,15 @@ from .safety import RobotsGate, check_public_http
 
 _ENV_PATH = "WS_BROWSER_PATH"
 _CANDIDATES = [
+    # Windows
     r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
     r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
     r"C:\Program Files\Google\Chrome\Application\chrome.exe",
     r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    # Linux / 云部署常见路径（找不到只是少一个兜底通道，不会崩）
+    "/usr/bin/chromium", "/usr/bin/chromium-browser",
+    "/usr/bin/google-chrome", "/usr/bin/google-chrome-stable",
+    "/usr/bin/microsoft-edge", "/usr/bin/microsoft-edge-stable",
 ]
 _cached: str | None = None
 _scanned = False
