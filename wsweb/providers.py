@@ -24,7 +24,7 @@ from .models import SearchResult
 from .safety import PoliteFetcher
 from .urlutil import decode_bing_redirect
 
-# 测试/自定义端点（保持与 RoleplayChat 相同手法：包级变量可换）
+# 测试/自定义端点（包级变量，便于测试与按需切换）
 BING_BASE = os.environ.get("WS_BING_BASE", "https://www.bing.com/search")
 BING_BASE_CN = os.environ.get("WS_BING_BASE_CN", "https://cn.bing.com/search")
 

@@ -1,15 +1,17 @@
 # DeepSeek Harness 接入补丁：web-search-mcp（可选 overlay）
 # 用法：dsh web --patch <本文件>；或把下方 - insert 块并入
 #       ~/.dsh/profiles/web/cordis.patch.yml（保存即热生效）。
+# 注意：把 <repo> 换成你克隆本仓库的绝对路径（Windows 用反斜杠，Linux 用正斜杠）。
 - insert:
     - id: local-websearch-mcp
       name: '@deepseek-ai/dsh-mcp-client'
       config:
         serverName: websearch
         transport: stdio
-        command: 'F:\DeepSeek-Harness\config\examples\web-search-mcp\.venv\Scripts\python.exe'
+        toolCallTimeoutMs: 180000
+        command: '<repo>\\.venv\Scripts\python.exe'
         args:
-          - 'F:\DeepSeek-Harness\config\examples\web-search-mcp\server.py'
+          - '<repo>\server.py'
         cwd: !!js process.cwd()
         env:
           TAVILY_API_KEY: !!js '`${process.env.TAVILY_API_KEY ?? ""}`'
