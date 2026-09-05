@@ -1,0 +1,12 @@
+# Web Search & Read MCP - dependencies (Python 3.10+, Windows verified)
+# NOTE: keep this file pure ASCII (pip decodes it with the locale codepage on Windows).
+# Style aligned with the finance example: mcp<2 (FastMCP v1 stable API; v2 renamed MCPServer).
+mcp>=1.2,<2
+requests>=2.28
+
+# full-text extraction (bundles readability-lxml fallback)
+trafilatura>=1.12
+
+# ---- optional (uncomment when needed) ----
+# use curl_cffi to impersonate Chrome TLS if Bing HTML scraping gets fingerprinted
+# curl_cffi>=0.11

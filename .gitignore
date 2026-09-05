@@ -1,0 +1,9 @@
+# 本项目本地文件忽略
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.env
+# 自测与临时
+*.log
+.tmp/

@@ -1,0 +1,17 @@
+# DeepSeek Harness 接入补丁：web-search-mcp（示例）
+# 用法：把 <REPO_DIR> 替换为本仓库的绝对路径（例如 D:\tools\web-search-mcp）后：
+#   dsh web --patch dsh-patch.example.yml
+# 或把下方 - insert 块并入 <DSH_HOME>\profiles\<profile>\cordis.patch.yml（保存即热生效）。
+- insert:
+    - id: local-websearch-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: websearch
+        transport: stdio
+        command: '<REPO_DIR>\.venv\Scripts\python.exe'
+        args:
+          - '<REPO_DIR>\server.py'
+        cwd: !!js process.cwd()
+        env:
+          TAVILY_API_KEY: !!js '`${process.env.TAVILY_API_KEY ?? ""}`'
+          BOCHA_API_KEY: !!js '`${process.env.BOCHA_API_KEY ?? ""}`'
