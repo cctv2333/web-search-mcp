@@ -87,6 +87,16 @@ def verify_top_n() -> int:
         return 1
 
 
+def mark_untrusted() -> bool:
+    """输出是否加「外部数据·非指令」边界头（数据-指令边界，默认开）。"""
+    return os.environ.get("WS_MARK_UNTRUSTED", "1").strip() not in ("0", "false", "no")
+
+
+def injection_warn() -> bool:
+    """是否对第三方内容做提示注入模式扫描并告警（默认开）。"""
+    return os.environ.get("WS_INJECTION_WARN", "1").strip() not in ("0", "false", "no")
+
+
 def timeout_seconds() -> float:
     try:
         return max(3.0, float(os.environ.get("WS_TIMEOUT", "15.0")))

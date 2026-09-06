@@ -52,7 +52,15 @@ class ReadResult:
     time: str = field(default_factory=now_str)
 
     def as_text(self) -> str:
-        out = [
+        from . import config
+        from .guard import injection_warning, scan_injection
+
+        out = []
+        if config.mark_untrusted():
+            from .guard import boundary_header
+
+            out.append(boundary_header(f"页面 {self.url}"))
+        out += [
             f"标题: {self.title or '(未识别)'}",
             f"URL : {self.url}",
             f"来源: {self.source} | 读取时间: {self.time}",
@@ -62,4 +70,7 @@ class ReadResult:
             out.append("已拼页码: " + ", ".join(self.fetched))
         out.append("")
         out.append(self.text)
+        hits = scan_injection(self.text)
+        if hits:
+            out.append(injection_warning(hits))
         return "\n".join(out)
