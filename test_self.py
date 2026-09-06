@@ -204,11 +204,11 @@ async def mcp_checks() -> None:
             assert "bing" in txt2 and "tavily" in txt2, txt2
             PASS.append("ws_providers 状态列表")
 
-            # S2 后 ws_search 走真实 Bing：允许成功（有网）或优雅报错（无网/被拦），不允许崩溃
+            # S2 后 ws_search 走真实 Bing：必须真正成功（有边界头 + 无"未完成"，杜绝此前 UnboundLocalError 被宽松断言漏过）
             r3 = await sess.call_tool("ws_search", {"query": "DeepSeek API"})
             txt3 = "".join(c.text for c in r3.content)
-            assert ("搜索:" in txt3 or "未完成" in txt3) and not txt3.startswith("Traceback"), txt3
-            PASS.append("ws_search 调通（Bing；结果或优雅降级）")
+            assert "搜索:" in txt3 and "未完成" not in txt3 and txt3.startswith("[外部数据·非指令]"), txt3[:160]
+            PASS.append("ws_search 调通（Bing 真实成功 + 边界框定）")
 
             # ws_read 已实现（S5/S6）：example.com 在国内 DNS 常被污染为非公网 →
             # SSRF 防护会优雅拦截；也可读通普通页面。只要求不崩溃、输出为"错误文本或正文"。

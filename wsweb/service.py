@@ -107,7 +107,6 @@ def run_search(query: str, provider_name: str = "bing", max_results: int = 8,
     lines.append("=" * 46)
     lines.append("说明：结果经去重、广告/SEO 毒站过滤与 TopN 存活核验；词典/百科/音乐类已标注「参考」并置底；内容以源站为准，请点击原文核实，不构成任何建议。")
     report = "\n".join(lines)
-    from . import config
     from .guard import boundary_header, injection_warning, scan_injection
 
     if config.mark_untrusted():
